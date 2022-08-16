@@ -1,25 +1,42 @@
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import './App.css';
 
-function App() {
+const App = () => {
+  const [advice, setAdvice] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    fetchAdvice();
+  }, []);
+
+  const fetchAdvice = async () => {
+    setIsLoading(true);
+    try {
+      const res = await axios.get('https://api.adviceslip.com/advice');
+      // console.log(res.data.slip.advice);
+      setAdvice(res.data.slip.advice);
+      // return res.data.slip.advice;
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      {isLoading && <h1>Loading...</h1>}
+      {!isLoading && (
+        <div className="card">
+          <h1 className="heading">"{advice}"</h1>
+          <button className="button" onClick={fetchAdvice}>
+            <span>Generate</span>
+          </button>
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default App;
